@@ -66,24 +66,24 @@ type ContactFilter struct {
 }
 
 // Search for contacts
-func (client *Client) ListContactsByFilter(contactfilter ContactFilter) ([]Contact, error) {
+func (client *Client) ListContactsByFilter(contactfilter ContactFilter) (*[]Contact, error) {
 
 	req, _ := client.NewRequest("POST", "/contacts", contactfilter)
 
 	searchedContacts := SearchedContacts{}
-	contacts := []Contact{}
 
 	data, err := client.Do(req)
 
 	if err != nil {
-		return contacts, err
+		return nil, err
 	}
 
 	json.Unmarshal(data, &searchedContacts)
 
+
 	if searchedContacts.ContactList == nil {
-		return contacts, errors.New("No contacts found")
+		return nil, errors.New("No contacts found")
 	}
 
-	return contacts, nil
+	return &searchedContacts.ContactList, nil
 }
