@@ -53,35 +53,37 @@ type NumberFormat struct {
 	Rfc3966          string `json:"rfc3966"`
 }
 
-type Search struct {
-	Search string `json:"search,omitempty"`
+type NewContacts struct {
+	Contacts []Contact `json:"contacts"`
 }
 
-// Find contact By Number
-func (client *Client) SearchContactbyNumber(number string) (Contact, error) {
-	body := Search{
-		number,
-	}
+type ContactFilter struct {
+	Pagination        string `json:"pagination"`
+	AlphabeticalOrder string `json:"alphabetical_order"`
+	Search            string `json:"search"`
+	LimitCount        int64  `json:"limit_count"`
+	LimitOffset       int64  `json:"limit_offset"`
+}
 
-	req, _ := client.NewRequest("POST", "/contacts", body)
+// Search for contacts
+func (client *Client) GetorCreateContacts(contactfilter ContactFilter) ([]Contact, error) {
+
+	req, _ := client.NewRequest("POST", "/contacts", contactfilter)
 
 	searchedContacts := SearchedContacts{}
-	contact := Contact{}
+	contacts := []Contact{}
 
 	data, err := client.Do(req)
 
 	if err != nil {
-		return contact, err
+		return contacts, err
 	}
 
 	json.Unmarshal(data, &searchedContacts)
 
-	if searchedContacts.ContactList != nil {
-		contact = searchedContacts.ContactList[0]
-	} else {
-		return contact, errors.New("No contacts found")
+	if searchedContacts.ContactList == nil {
+		return contacts, errors.New("No contacts found")
 	}
 
-
-	return contact, nil
+	return contacts, nil
 }
