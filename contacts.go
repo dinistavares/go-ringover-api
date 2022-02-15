@@ -66,7 +66,7 @@ type ContactFilter struct {
 }
 
 // Search for contacts
-func (client *Client) GetorCreateContacts(contactfilter ContactFilter) ([]Contact, error) {
+func (client *Client) ListContactsByFilter(contactfilter ContactFilter) ([]Contact, error) {
 
 	req, _ := client.NewRequest("POST", "/contacts", contactfilter)
 
