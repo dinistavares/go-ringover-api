@@ -24,6 +24,6 @@ Construct a new Ringover client, and Authenticate. You can then call the availab
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Printf("number: %+v\n", users ) 
+		fmt.Printf("Users: %+v\n", users ) 
 	}
 ```
