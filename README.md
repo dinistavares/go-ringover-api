@@ -12,10 +12,18 @@ To authenticate against the [Ringover REST API](https://developer.ringover.com/)
 
 **Keep your token API key private, and store them safely for long-term use.**
 
-Construct a new Ringover client, and Authenticate for example: 
+Construct a new Ringover client, and Authenticate. You can then call the availabl methods, for example: 
 
 ```go
-client := ringoverAPI.New()
+  client := ringoverAPI.New()
 
-client.Authenticate(API_KEY)
+  client.Authenticate(API_KEY)
+
+	users, err := client.GetUsersInTeams()
+
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Printf("number: %+v\n", users ) 
+	}
 ```
