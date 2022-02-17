@@ -54,7 +54,20 @@ type NumberFormat struct {
 }
 
 type NewContacts struct {
-	Contacts []Contact `json:"contacts"`
+	Contacts []NewContact `json:"contacts"`
+}
+
+type NewContact struct {
+	Firstname string       `json:"firstname"`
+	Lastname  string       `json:"lastname"`
+	Company   string       `json:"company"`
+	IsShared  bool         `json:"is_shared"`
+	Numbers   []NewNumber `json:"numbers"`
+}
+
+type NewNumber struct {
+	Number int64  `json:"number"`
+	Type   string `json:"type"`
 }
 
 type ContactFilter struct {
@@ -69,9 +82,9 @@ type Team struct {
 	TeamID            int         `json:"team_id"`
 	Name              string      `json:"name"`
 	TotalNumbersCount int         `json:"total_numbers_count"`
-	Numbers           []Number   `json:"numbers"`
+	Numbers           []Number    `json:"numbers"`
 	TotalUsersCount   int         `json:"total_users_count"`
-	Users             []User     `json:"users"`
+	Users             []User      `json:"users"`
 	TotalIvrsCount    int         `json:"total_ivrs_count"`
 	Ivrs              interface{} `json:"ivrs"`
 	TotalTagsCount    int         `json:"total_tags_count"`
@@ -81,16 +94,16 @@ type Team struct {
 }
 
 type User struct {
-	UserID     int       `json:"user_id"`
-	TeamID     int       `json:"team_id"`
-	Initial    string    `json:"initial"`
-	Color      string    `json:"color"`
-	Firstname  string    `json:"firstname"`
-	Lastname   string    `json:"lastname"`
-	Company    string    `json:"company"`
-	Email      string    `json:"email"`
-	Picture    string    `json:"picture"`
-	ConcatName string    `json:"concat_name"`
+	UserID     int      `json:"user_id"`
+	TeamID     int      `json:"team_id"`
+	Initial    string   `json:"initial"`
+	Color      string   `json:"color"`
+	Firstname  string   `json:"firstname"`
+	Lastname   string   `json:"lastname"`
+	Company    string   `json:"company"`
+	Email      string   `json:"email"`
+	Picture    string   `json:"picture"`
+	ConcatName string   `json:"concat_name"`
 	Numbers    []Number `json:"numbers,omitempty"`
 }
 
@@ -117,12 +130,24 @@ func (client *Client) ListContactsByFilter(contactfilter ContactFilter) (*[]Cont
 
 	json.Unmarshal(data, &searchedContacts)
 
-
 	if searchedContacts.ContactList == nil {
 		return nil, errors.New("no contacts found")
 	}
 
 	return &searchedContacts.ContactList, nil
+}
+
+func (client *Client) CreateNewContact(newConacts NewContacts) error {
+
+	req, _ := client.NewRequest("POST", "/contacts", newConacts)
+
+	_, err := client.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (client *Client) GetUsersInTeams() (*[]User, error) {
@@ -139,11 +164,10 @@ func (client *Client) GetUsersInTeams() (*[]User, error) {
 
 	json.Unmarshal(data, &team)
 
-
 	if team.Users == nil {
 		return nil, errors.New("no users found")
 	}
 
 	return &team.Users, nil
-	
+
 }
