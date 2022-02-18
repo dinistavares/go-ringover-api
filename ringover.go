@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -69,6 +70,8 @@ func (client *Client) NewRequest(method, urlStr string, body interface{}) (*http
 
 	url := client.BaseURL.ResolveReference(rel)
 
+	fmt.Println(url)
+
 	var buf io.ReadWriter
 	if body != nil {
 		buf = new(bytes.Buffer)
@@ -91,21 +94,28 @@ func (client *Client) NewRequest(method, urlStr string, body interface{}) (*http
 }
 
 // Do sends an API Request
-func (client *Client) Do(req *http.Request) ([]byte, error) {
+func (client *Client) Do(req *http.Request) ([]byte, *http.Response, error) {
 
 	response, err := client.client.Do(req)
 
+
 	if err != nil {
-		return nil, err
+		return nil, response, err
 	}
 
 	if response.StatusCode >= 500 {
-		return nil, errors.New("Server error: " + response.Status)
+		return nil, response, errors.New("Server error: " + response.Status)
 	} else if response.StatusCode >= 400 {
-		return nil, errors.New("Error: " + response.Status)
+		return nil, response, errors.New("Error: " + response.Status)
 	}
 
 	defer response.Body.Close()
 
-	return ioutil.ReadAll(response.Body)
+	data, err := ioutil.ReadAll(response.Body)
+
+	if err != nil {
+		return nil, response, err
+	}
+
+	return data, response, nil
 }

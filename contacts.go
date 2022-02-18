@@ -115,14 +115,14 @@ type Groups struct {
 	IsJumper        bool        `json:"is_jumper"`
 }
 
-// Search for contacts
+// List Contacts by Filter
 func (client *Client) ListContactsByFilter(contactfilter ContactFilter) (*[]Contact, error) {
 
 	req, _ := client.NewRequest("POST", "/contacts", contactfilter)
 
 	searchedContacts := SearchedContacts{}
 
-	data, err := client.Do(req)
+	data, _, err := client.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -137,11 +137,12 @@ func (client *Client) ListContactsByFilter(contactfilter ContactFilter) (*[]Cont
 	return &searchedContacts.ContactList, nil
 }
 
+// Create A New Contact
 func (client *Client) CreateNewContact(newConacts NewContacts) error {
 
 	req, _ := client.NewRequest("POST", "/contacts", newConacts)
 
-	_, err := client.Do(req)
+	_, _, err := client.Do(req)
 
 	if err != nil {
 		return err
@@ -150,13 +151,46 @@ func (client *Client) CreateNewContact(newConacts NewContacts) error {
 	return nil
 }
 
+// Update A Contact
+func (client *Client) UpdateContactByID(contactID string, newContact NewContact) error {
+	url := "/contacts/" + contactID
+
+	req, _ := client.NewRequest("PUT", url, newContact)
+
+	_, _, err := client.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Delete A Contact
+func (client *Client) DeleteContactByID(contactID string) error  {
+	
+	url := "/contacts/" + contactID
+
+	req, _ := client.NewRequest("DELETE", url, nil)
+
+	_, _, err := client.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+// Get Users in Teams
 func (client *Client) GetUsersInTeams() (*[]User, error) {
 
 	req, _ := client.NewRequest("GET", "/teams", nil)
 
 	team := Team{}
 
-	data, err := client.Do(req)
+	data, _, err := client.Do(req)
 
 	if err != nil {
 		return nil, err
