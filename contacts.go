@@ -3,6 +3,7 @@ package ringover
 import (
 	"encoding/json"
 	"errors"
+	"strings"
 	"time"
 )
 
@@ -156,6 +157,25 @@ func (client *Client) UpdateContactByID(contactID string, newContact NewContact)
 	url := "/contacts/" + contactID
 
 	req, _ := client.NewRequest("PUT", url, newContact)
+
+	_, _, err := client.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Add number to specific contact 
+func (client *Client) AddNewNumberToExistingContact(contactID string, newNumber NewNumber) error {
+
+	numbers := []NewNumber{}
+	numbers = append(numbers, newNumber)
+
+	url := strings.Join([]string{"/contacts", contactID, "numbers"}, "/")
+
+	req, _ := client.NewRequest("POST", url, numbers)
 
 	_, _, err := client.Do(req)
 
