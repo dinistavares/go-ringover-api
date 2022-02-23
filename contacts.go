@@ -116,6 +116,17 @@ type Groups struct {
   IsJumper        bool        `json:"is_jumper"`
 }
 
+type UserResponse struct {
+	UUID      string `json:"uuid"`
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Company   string `json:"company"`
+	Picture   string `json:"picture"`
+	URL       string `json:"url"`
+	Data      []byte   `json:"data"`
+	IsShared  int    `json:"is_shared"`
+}
+
 // List Contacts by Filter
 func (client *Client) ListContactsByFilter(contactfilter ContactFilter) (*[]Contact, error) {
 
@@ -131,7 +142,7 @@ func (client *Client) ListContactsByFilter(contactfilter ContactFilter) (*[]Cont
 
   json.Unmarshal(data, &searchedContacts)
 
-  if searchedContacts.ContactList == nil {
+  if searchedContacts.ContactList == nil || searchedContacts.ContactList[0].Numbers == nil {
     return nil, errors.New("no contacts found")
   }
 
