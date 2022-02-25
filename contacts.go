@@ -21,9 +21,9 @@ type Contact struct {
   ContactID        int         `json:"contact_id"`
   IsShared         bool        `json:"is_shared"`
   ImOwner          bool        `json:"im_owner"`
-  SocialService    interface{} `json:"social_service"`
-  SocialServiceID  interface{} `json:"social_service_id"`
-  SocialProfileURL interface{} `json:"social_profile_url"`
+  SocialService    string      `json:"social_service"`
+  SocialServiceID  string      `json:"social_service_id"`
+  SocialProfileURL string      `json:"social_profile_url"`
   SocialData       interface{} `json:"social_data"`
   Firstname        string      `json:"firstname"`
   Lastname         string      `json:"lastname"`
