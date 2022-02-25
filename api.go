@@ -197,6 +197,22 @@ func (client *Client) AddNewNumberToExistingContact(contactID string, newNumber 
   return nil
 }
 
+// Delete A number 
+func (client *Client) DeleteNumberFromContact(contactID string, number string) error {
+
+  url := strings.Join([]string{"/contacts", contactID, "numbers", number}, "/")
+  
+  req, _ := client.NewRequest("DELETE", url, nil)
+
+  _, _, err := client.Do(req)
+
+  if err != nil {
+    return err
+  }
+
+  return nil
+}
+
 // Delete A Contact
 func (client *Client) DeleteContactByID(contactID string) error  {
   
