@@ -8,7 +8,7 @@ An Unofficial Ringover API Golang wrapper.
 import ringoverAPI "github.com/dinistavares/go-ringover-api"
 ```
 
-To authenticate against the [Ringover REST API](https://developer.ringover.com/), obtain your API Key from the Developer page in your [Ringover Dashboard](https://dashboard.ringover.com/developer). You'll need to create, copy and replace `API_KEY` in the code below.
+To authenticate against the [Ringover REST API](https://developer.ringover.com), obtain your API Key from the Developer page in your [Ringover Dashboard](https://dashboard.ringover.com/developer). You'll need to create, copy and replace `API_KEY` in the code below.
 
 **Keep your token API key private, and store them safely for long-term use.**
 
