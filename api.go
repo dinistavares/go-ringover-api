@@ -1,10 +1,10 @@
 package ringover
 
 import (
-	"encoding/json"
-	"errors"
-	"strings"
-	"time"
+  "encoding/json"
+  "errors"
+  "strings"
+  "time"
 )
 
 type SearchedContacts struct {
@@ -117,14 +117,28 @@ type Groups struct {
 }
 
 type UserResponse struct {
-	UUID      string `json:"uuid"`
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	Company   string `json:"company"`
-	Picture   string `json:"picture"`
-	URL       string `json:"url"`
-	Data      []byte   `json:"data"`
-	IsShared  int    `json:"is_shared"`
+  UUID      string `json:"uuid"`
+  Firstname string `json:"firstname"`
+  Lastname  string `json:"lastname"`
+  Company   string `json:"company"`
+  Picture   string `json:"picture"`
+  URL       string `json:"url"`
+  Data      []byte   `json:"data"`
+  IsShared  int    `json:"is_shared"`
+}
+
+// Get All Calls
+func (client *Client) ListAllCalls() ([]byte, error) {
+
+  req, _ := client.NewRequest("GET", "/calls", nil)
+
+  data, _, err := client.Do(req)
+
+  if err != nil {
+    return nil, err
+  }
+
+  return data, nil
 }
 
 // List Contacts by Filter
