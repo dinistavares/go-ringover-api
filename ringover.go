@@ -1,23 +1,23 @@
 package ringover
 
 import (
-	"bytes"
-	"encoding/json"
-	"errors"
-	"io"
-	"io/ioutil"
-	"net/http"
-	"net/url"
+  "bytes"
+  "encoding/json"
+  "errors"
+  "io"
+  "io/ioutil"
+  "net/http"
+  "net/url"
+  "strings"
 )
 
 const (
   defaultRestEndpointURL     = "https://public-api.ringover.com/v2"
+  defaultUSRestEndpointURL   = "https://public-api-us.ringover.com/v2"
   defaultRestEndpointVersion = "v2"
   defaultHeaderName          = "Authorization"
   acceptedContentType        = "application/json"
 )
-
-var errorDoNilRequest = errors.New("request could not be constructed")
 
 type ClientConfig struct {
   HttpClient          *http.Client
@@ -56,6 +56,12 @@ func New() *Client {
 
 // Authenticate saves authenitcation parameters for user
 func (client *Client) Authenticate(apiKey string) {
+  parts := strings.Split(apiKey, "_")
+
+  if len(parts) > 0 && parts[0] == "US" {
+    client.config.RestEndpointURL = defaultUSRestEndpointURL
+  }
+
   client.auth.HeaderName = defaultHeaderName
   client.auth.ApiKey = apiKey
 }
@@ -92,9 +98,7 @@ func (client *Client) NewRequest(method, urlStr string, body interface{}) (*http
 
 // Do sends an API Request
 func (client *Client) Do(req *http.Request) ([]byte, *http.Response, error) {
-
   response, err := client.client.Do(req)
-
 
   if err != nil {
     return nil, response, err
