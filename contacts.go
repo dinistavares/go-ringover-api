@@ -7,6 +7,18 @@ import (
   "time"
 )
 
+type NewContacts struct {
+  Contacts []NewContact `json:"contacts"`
+}
+
+type NewContact struct {
+  Firstname string       `json:"firstname"`
+  Lastname  string       `json:"lastname"`
+  Company   string       `json:"company"`
+  IsShared  bool         `json:"is_shared"`
+  Numbers   []NewNumber `json:"numbers"`
+}
+
 type SearchedContacts struct {
   UserID            int       `json:"user_id"`
   TeamID            int       `json:"team_id"`
@@ -36,62 +48,12 @@ type Contact struct {
   Numbers          []Number    `json:"numbers"`
 }
 
-type Number struct {
-  Number int64        `json:"number"`
-  Type   string       `json:"type"`
-  Format NumberFormat `json:"format"`
-}
-
-type NumberFormat struct {
-  Raw              int64  `json:"raw"`
-  CountryCode      string `json:"country_code"`
-  Country          string `json:"country"`
-  E164             string `json:"e164"`
-  International    string `json:"international"`
-  InternationalAlt string `json:"international_alt"`
-  National         string `json:"national"`
-  NationalAlt      string `json:"national_alt"`
-  Rfc3966          string `json:"rfc3966"`
-}
-
-type NewContacts struct {
-  Contacts []NewContact `json:"contacts"`
-}
-
-type NewContact struct {
-  Firstname string       `json:"firstname"`
-  Lastname  string       `json:"lastname"`
-  Company   string       `json:"company"`
-  IsShared  bool         `json:"is_shared"`
-  Numbers   []NewNumber `json:"numbers"`
-}
-
-type NewNumber struct {
-  Number int64  `json:"number"`
-  Type   string `json:"type"`
-}
-
 type ContactFilter struct {
   Pagination        string `json:"pagination"`
   AlphabeticalOrder string `json:"alphabetical_order"`
   Search            string `json:"search"`
   LimitCount        int64  `json:"limit_count"`
   LimitOffset       int64  `json:"limit_offset"`
-}
-
-type Team struct {
-  TeamID            int         `json:"team_id"`
-  Name              string      `json:"name"`
-  TotalNumbersCount int         `json:"total_numbers_count"`
-  Numbers           []Number    `json:"numbers"`
-  TotalUsersCount   int         `json:"total_users_count"`
-  Users             []User      `json:"users"`
-  TotalIvrsCount    int         `json:"total_ivrs_count"`
-  Ivrs              interface{} `json:"ivrs"`
-  TotalTagsCount    int         `json:"total_tags_count"`
-  Tags              interface{} `json:"tags"`
-  TotalGroupsCount  int         `json:"total_groups_count"`
-  Groups            []Groups    `json:"groups"`
 }
 
 type User struct {
@@ -108,14 +70,6 @@ type User struct {
   Numbers    []Number `json:"numbers,omitempty"`
 }
 
-type Groups struct {
-  GroupID         int         `json:"group_id"`
-  Name            string      `json:"name"`
-  TotalUsersCount int         `json:"total_users_count"`
-  Color           interface{} `json:"color"`
-  IsJumper        bool        `json:"is_jumper"`
-}
-
 type UserResponse struct {
   UUID      string `json:"uuid"`
   Firstname string `json:"firstname"`
@@ -127,23 +81,8 @@ type UserResponse struct {
   IsShared  int    `json:"is_shared"`
 }
 
-// Get All Calls
-func (client *Client) ListAllCalls() ([]byte, error) {
-
-  req, _ := client.NewRequest("GET", "/calls", nil)
-
-  data, _, err := client.Do(req)
-
-  if err != nil {
-    return nil, err
-  }
-
-  return data, nil
-}
-
 // List Contacts by Filter
 func (client *Client) ListContactsByFilter(contactfilter ContactFilter) (*[]Contact, error) {
-
   req, _ := client.NewRequest("POST", "/contacts", contactfilter)
 
   searchedContacts := SearchedContacts{}
@@ -163,9 +102,9 @@ func (client *Client) ListContactsByFilter(contactfilter ContactFilter) (*[]Cont
   return &searchedContacts.ContactList, nil
 }
 
+
 // Create A New Contact
 func (client *Client) CreateNewContact(newConacts NewContacts) error {
-
   req, _ := client.NewRequest("POST", "/contacts", newConacts)
 
   _, _, err := client.Do(req)
@@ -192,9 +131,8 @@ func (client *Client) UpdateContactByID(contactID string, newContact NewContact)
   return nil
 }
 
-// Add number to specific contact 
+// Add number to specific contact
 func (client *Client) AddNewNumberToExistingContact(contactID string, newNumber NewNumber) error {
-
   numbers := []NewNumber{}
   numbers = append(numbers, newNumber)
 
@@ -211,11 +149,11 @@ func (client *Client) AddNewNumberToExistingContact(contactID string, newNumber 
   return nil
 }
 
-// Delete A number 
-func (client *Client) DeleteNumberFromContact(contactID string, number string) error {
 
+// Delete A number
+func (client *Client) DeleteNumberFromContact(contactID string, number string) error {
   url := strings.Join([]string{"/contacts", contactID, "numbers", number}, "/")
-  
+
   req, _ := client.NewRequest("DELETE", url, nil)
 
   _, _, err := client.Do(req)
@@ -229,7 +167,6 @@ func (client *Client) DeleteNumberFromContact(contactID string, number string) e
 
 // Delete A Contact
 func (client *Client) DeleteContactByID(contactID string) error  {
-  
   url := "/contacts/" + contactID
 
   req, _ := client.NewRequest("DELETE", url, nil)
@@ -241,28 +178,5 @@ func (client *Client) DeleteContactByID(contactID string) error  {
   }
 
   return nil
-
-}
-
-// Get Users in Teams
-func (client *Client) GetUsersInTeams() (*[]User, error) {
-
-  req, _ := client.NewRequest("GET", "/teams", nil)
-
-  team := Team{}
-
-  data, _, err := client.Do(req)
-
-  if err != nil {
-    return nil, err
-  }
-
-  json.Unmarshal(data, &team)
-
-  if team.Users == nil {
-    return nil, errors.New("no users found")
-  }
-
-  return &team.Users, nil
 
 }
