@@ -60,6 +60,7 @@ func (client *Client) Authenticate(apiKey string) {
 
   if len(parts) > 0 && parts[0] == "US" {
     client.config.RestEndpointURL = defaultUSRestEndpointURL
+    client.BaseURL, _ = url.Parse(defaultUSRestEndpointURL)
   }
 
   client.auth.HeaderName = defaultHeaderName
