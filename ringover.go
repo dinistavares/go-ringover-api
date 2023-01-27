@@ -67,6 +67,7 @@ func (client *Client) Authenticate(apiKey string) {
   client.auth.ApiKey = apiKey
 }
 
+
 // NewRequest creates an API request
 func (client *Client) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
   rel, err := url.Parse(client.config.RestEndpointVersion + urlStr)
