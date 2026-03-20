@@ -2,13 +2,13 @@ package ringover
 
 // Get All Calls
 func (client *Client) ListAllCalls() ([]byte, error) {
-  req, _ := client.NewRequest("GET", "/calls", nil)
+	req, _ := client.NewRequest("GET", "/calls", nil)
 
-  data, _, err := client.Do(req)
+	data, _, err := client.Do(req)
 
-  if err != nil {
-    return nil, err
-  }
+	if err != nil {
+		return nil, err
+	}
 
-  return data, nil
+	return data, nil
 }
