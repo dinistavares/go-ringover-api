@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 const (
@@ -17,6 +17,7 @@ const (
 	defaultRestEndpointVersion = "v2"
 	defaultHeaderName          = "Authorization"
 	acceptedContentType        = "application/json"
+	clientTimeout              = 10
 )
 
 type ClientConfig struct {
@@ -40,11 +41,26 @@ type Client struct {
 
 // New returns a new APi Client
 func New() *Client {
-	config := ClientConfig{}
+	return NewWithConfig(ClientConfig{})
+}
 
-	config.HttpClient = http.DefaultClient
-	config.RestEndpointURL = defaultRestEndpointURL
-	config.RestEndpointVersion = defaultRestEndpointVersion
+func NewWithConfig(config ClientConfig) *Client {
+	// Create client
+	config.HttpClient = &http.Client{
+		Timeout: time.Duration(clientTimeout * time.Second),
+	}
+
+	if config.RestEndpointURL == "" {
+		config.RestEndpointURL = defaultRestEndpointURL
+	}
+
+	if config.RestEndpointURL == "" {
+		config.RestEndpointURL = defaultRestEndpointURL
+	}
+
+	if config.RestEndpointVersion == "" {
+		config.RestEndpointVersion = defaultRestEndpointVersion
+	}
 
 	// Create client
 	baseURL, _ := url.Parse(config.RestEndpointURL)
@@ -113,7 +129,7 @@ func (client *Client) Do(req *http.Request) ([]byte, *http.Response, error) {
 
 	defer response.Body.Close()
 
-	data, err := ioutil.ReadAll(response.Body)
+	data, err := io.ReadAll(response.Body)
 
 	if err != nil {
 		return nil, response, err
